@@ -14,11 +14,6 @@ repositories:
     url: https://github.com/evannsm/ROS2Logger.git
     version: main
 
-  src/newton_raphson_px4:
-    type: git
-    url: https://github.com/evannsm/newton_raphson_px4.git
-    version: main
-
   src/geometric_px4:
     type: git
     url: https://github.com/evannsm/geometric_px4.git
