@@ -1,0 +1,5 @@
+# not a workspace itself — nothing to ignore build-wise
+# but if someone runs make from here by accident:
+build/
+install/
+log/

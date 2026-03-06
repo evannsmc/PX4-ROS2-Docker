@@ -1,0 +1,9 @@
+numpy
+scipy
+matplotlib
+jax[cpu]
+equinox
+jaxtyping
+pyJoules
+casadi
+acados_template
