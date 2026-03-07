@@ -34,7 +34,6 @@
 # ────────────────────────────────
 #   /opt/ros/jazzy/setup.bash
 #   → /opt/ws_px4_msgs/install/setup.bash   (px4_msgs overlay, pre-built)
-#   → /opt/px4-venv/bin/activate            (Python venv)
 #   → /workspace/install/setup.bash         (your built packages, if present)
 #
 # TYPICAL WORKFLOW
