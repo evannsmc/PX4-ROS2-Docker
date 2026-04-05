@@ -19,7 +19,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
 # that matches the PX4 firmware version used in this stack.
 RUN mkdir -p /opt/ws_px4_msgs/src && \
     git clone --depth 1 --branch v1.16_minimal_msgs \
-        https://github.com/evannsm/px4_msgs.git /opt/ws_px4_msgs/src/px4_msgs && \
+        https://github.com/evannsmc/px4_msgs.git /opt/ws_px4_msgs/src/px4_msgs && \
     source /opt/ros/jazzy/setup.bash && \
     cd /opt/ws_px4_msgs && \
     colcon build \

@@ -1,30 +1,30 @@
 repositories:
   src/quad_platforms:
     type: git
-    url: https://github.com/evannsm/quad_platforms.git
+    url: https://github.com/evannsmc/quad_platforms.git
     version: main
 
   src/quad_trajectories:
     type: git
-    url: https://github.com/evannsm/quad_trajectories.git
+    url: https://github.com/evannsmc/quad_trajectories.git
     version: main
 
   src/ROS2Logger:
     type: git
-    url: https://github.com/evannsm/ROS2Logger.git
+    url: https://github.com/evannsmc/ROS2Logger.git
     version: main
 
   src/newton_raphson_px4:
     type: git
-    url: https://github.com/evannsm/newton_raphson_px4.git
+    url: https://github.com/evannsmc/newton_raphson_px4.git
     version: main
 
   src/geometric_px4:
     type: git
-    url: https://github.com/evannsm/geometric_px4.git
+    url: https://github.com/evannsmc/geometric_px4.git
     version: main
 
   src/nmpc_acados_px4:
     type: git
-    url: https://github.com/evannsm/nmpc_acados_px4.git
+    url: https://github.com/evannsmc/nmpc_acados_px4.git
     version: main

@@ -88,7 +88,7 @@ pip install vcstool
 ### Step 1 — Clone this repo
 
 ```bash
-git clone https://github.com/evannsm/PX4-ROS2-Docker.git
+git clone https://github.com/evannsmc/PX4-ROS2-Docker.git
 cd PX4-ROS2-Docker
 ```
 
@@ -232,6 +232,6 @@ The `--platform hw` flag switches to hardware-tuned parameters defined in
 ## Docker image vs the contraction controller image
 
 This image (`px4_ros2_jazzy`) is a general workspace image for all controllers.
-The [contraction_controller_px4](https://github.com/evannsm/contraction_controller_px4)
+The [contraction_controller_px4](https://github.com/evannsmc/contraction_controller_px4)
 repo ships its own self-contained image — use that if you only need the
 contraction controller and want a single-repo clone-and-run experience.
