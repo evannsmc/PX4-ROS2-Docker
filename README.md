@@ -1,8 +1,42 @@
-# PX4-ROS2-Docker
+# PX4-ROS2 Docker Workspace
 
-A general-purpose Docker + Makefile workspace for building and running PX4 ROS 2 offboard controllers.
+[![Part of: PX4-ROS2 Control Stack](https://img.shields.io/badge/Part_of-PX4--ROS2_Control_Stack-blue)](https://www.evannsmc.com/projects)
+[![ROS 2 Compatible](https://img.shields.io/badge/ROS%202-Humble_%7C_Jazzy-blue)](https://docs.ros.org/)
+[![PX4 Compatible](https://img.shields.io/badge/PX4-Autopilot-pink)](https://github.com/PX4/PX4-Autopilot)
+[![Docker: px4_ros2_jazzy](https://img.shields.io/badge/Docker-px4__ros2__jazzy-2496ED?logo=docker&logoColor=white)](https://www.docker.com/)
+![License: MIT](https://img.shields.io/badge/License-MIT-green)
+
+The **integration hub** for the [evannsmc PX4-ROS2 control stack](https://www.evannsmc.com/projects): a Docker image + Makefile that build and run the stack's ROS 2 offboard controllers against PX4. The image (`px4_ros2_jazzy`) ships ROS 2 Jazzy, a prebuilt `px4_msgs` overlay, and all the Python dependencies (JAX, acados, …), so any controller in the stack builds and runs with no per-machine setup beyond Docker, PX4-Autopilot, and the DDS agent.
+
+PX4 SITL/hardware and the MicroXRCE-DDS agent run on the **host**; your controller node runs in the **container** (with `--net host`), and your workspace is bind-mounted at `/workspace`.
+
+<div align="center">
 
 ---
+
+**[<kbd> <br> Architecture <br> </kbd>](#how-the-full-stack-fits-together)** 
+**[<kbd> <br> Prerequisites <br> </kbd>](#prerequisites-host-machine)** 
+**[<kbd> <br> Setup <br> </kbd>](#setup)** 
+**[<kbd> <br> Running <br> </kbd>](#running-a-controller)** 
+**[<kbd> <br> Makefile <br> </kbd>](#makefile-reference)** 
+**[<kbd> <br> Notes <br> </kbd>](#notes-on-specific-controllers)** 
+
+---
+
+</div>
+
+<details>
+<summary><b>📖 Table of Contents</b></summary>
+
+- [How the full stack fits together](#how-the-full-stack-fits-together)
+- [Prerequisites (host machine)](#prerequisites-host-machine)
+- [Setup](#setup)
+- [Running a controller](#running-a-controller)
+- [Makefile reference](#makefile-reference)
+- [Notes on specific controllers](#notes-on-specific-controllers)
+- [License](#license)
+
+</details>
 
 ## How the full stack fits together
 
@@ -32,21 +66,13 @@ A general-purpose Docker + Makefile workspace for building and running PX4 ROS 2
 └─────────────────────────────────────────────────────────────┘
 ```
 
-**PX4 Autopilot** runs the low-level flight controller (attitude, mixer, ESC output).
-It communicates over uORB topics internally.
+**PX4 Autopilot** runs the low-level flight controller (attitude, mixer, ESC output). It communicates over uORB topics internally.
 
-**MicroXRCE-DDS Agent** bridges uORB ↔ DDS/ROS 2, making PX4 topics visible as
-standard ROS 2 topics (e.g. `/fmu/out/vehicle_odometry`, `/fmu/in/trajectory_setpoint`).
+**MicroXRCE-DDS Agent** bridges uORB ↔ DDS/ROS 2, making PX4 topics visible as standard ROS 2 topics (e.g. `/fmu/out/vehicle_odometry`, `/fmu/in/trajectory_setpoint`).
 
-**The container** runs your ROS 2 controller node.  It subscribes to vehicle state
-topics and publishes control setpoints back to PX4 via the bridge.  `--net host`
-means the container shares the host network — no extra port mapping needed.
+**The container** runs your ROS 2 controller node. It subscribes to vehicle state topics and publishes control setpoints back to PX4 via the bridge. `--net host` means the container shares the host network — no extra port mapping needed.
 
-**Your workspace** is mounted into the container at `/workspace`.  All source code
-lives on the host so you can edit normally; the container is only used for building
-and running.
-
----
+**Your workspace** is mounted into the container at `/workspace`. All source code lives on the host so you can edit normally; the container is only used for building and running.
 
 ## Prerequisites (host machine)
 
@@ -81,8 +107,6 @@ make -j$(nproc) && sudo make install && sudo ldconfig
 pip install vcstool
 ```
 
----
-
 ## Setup
 
 ### Step 1 — Clone this repo
@@ -107,8 +131,7 @@ This clones into `~/ws_px4/src/`:
 - `geometric_px4` — Geometric controller
 - `nmpc_acados_px4` — Nonlinear MPC controller (requires acados, see note below)
 
-To use only specific controllers, clone just what you need — `quad_platforms` and
-`quad_trajectories` are required by all of them.
+To use only specific controllers, clone just what you need — `quad_platforms` and `quad_trajectories` are required by all of them.
 
 ### Step 3 — Build the Docker image (once)
 
@@ -122,7 +145,7 @@ The image (`px4_ros2_jazzy`) contains:
 |---|---|
 | ROS 2 Jazzy | `osrf/ros:jazzy-desktop-full` base |
 | px4_msgs | pre-built at `/opt/ws_px4_msgs` (branch `v1.16_minimal_msgs`) |
-| Python venv | `/opt/px4-venv` — JAX, equinox, jaxtyping, scipy, matplotlib, pyJoules, casadi, immrax, linrax |
+| Python venv | `/opt/px4-venv` — JAX, equinox, jaxtyping, scipy, matplotlib, pyJoules, casadi, immrax, linrax, acados_template |
 
 ### Step 4 — Start the container
 
@@ -132,8 +155,7 @@ make run WORKSPACE=~/ws_px4
 
 This mounts `~/ws_px4` → `/workspace` and starts the container in the background.
 
-> `WORKSPACE` defaults to `~/ws_px4_work` if not specified.  Set it to wherever
-> you created your workspace in Step 2.
+> `WORKSPACE` defaults to `~/ws_px4_work` if not specified. Set it to wherever you created your workspace in Step 2.
 
 ### Step 5 — Build the ROS 2 workspace (first time, or after adding packages)
 
@@ -146,8 +168,6 @@ To build only specific packages:
 ```bash
 make build_ros PACKAGES="newton_raphson_px4 quad_platforms quad_trajectories"
 ```
-
----
 
 ## Running a controller
 
@@ -188,13 +208,11 @@ Common trajectory options: `hover`, `circle_horz`, `fig8_vert`, `helix`, `yaw_on
 
 Common platform options: `sim`, `hw`
 
----
-
 ## Makefile reference
 
 | Command | Description |
 |---|---|
-| `make build` | Build the Docker image |
+| `make build` | Build the Docker image (`px4_ros2_jazzy`) |
 | `make run [WORKSPACE=path]` | Start the container, mounting the given workspace |
 | `make attach` | Open a shell inside the running container |
 | `make build_ros [PACKAGES="..."]` | Run `colcon build` inside the container |
@@ -203,35 +221,20 @@ Common platform options: `sim`, `hw`
 | `make stop` | Stop the container |
 | `make kill` | Force-kill the container |
 
----
-
 ## Notes on specific controllers
 
-### NMPC (nmpc_acados_px4)
+### NMPC (nmpc_acados_px4) — acados solver
 
-The NMPC controller uses [acados](https://docs.acados.org/) for the OCP solver.
-`acados_template` (the Python interface) is installed in the venv, but the
-generated C solver must be compiled inside the container after build:
-
-```bash
-make attach
-cd /workspace/src/nmpc_acados_px4
-python3 nmpc_acados_px4_utils/controller/nmpc/generate_nmpc.py
-```
-
-This produces a compiled shared library that `run_node` loads at runtime.
+The NMPC controllers use [acados](https://docs.acados.org/) for the OCP solver, with `acados_template` (the Python interface) preinstalled in the image. **The generated C solver is produced automatically** — the Python node (`nmpc_acados_px4`) generates/refreshes it on startup, and the C++ package (`nmpc_acados_px4_cpp`) generates it at build time via a stamp-cached guard. No manual code-generation step is required.
 
 ### Hardware vs simulation
 
-The `--platform hw` flag switches to hardware-tuned parameters defined in
-`quad_platforms`.  For hardware flights you also need to set the correct
-`ROS_DOMAIN_ID` (default: 31) to match your onboard computer's DDS config.
+The `--platform hw` flag switches to hardware-tuned parameters defined in `quad_platforms`. For hardware flights you also need to set the correct `ROS_DOMAIN_ID` (default: 31) to match your onboard computer's DDS config.
 
----
+### Single-repo alternative
 
-## Docker image vs the contraction controller image
+This image (`px4_ros2_jazzy`) is a general workspace image for all controllers. The [contraction_controller_px4](https://github.com/evannsmc/contraction_controller_px4) repo ships its own self-contained image — use that if you only need the contraction controller and want a single-repo clone-and-run experience.
 
-This image (`px4_ros2_jazzy`) is a general workspace image for all controllers.
-The [contraction_controller_px4](https://github.com/evannsmc/contraction_controller_px4)
-repo ships its own self-contained image — use that if you only need the
-contraction controller and want a single-repo clone-and-run experience.
+## License
+
+MIT
