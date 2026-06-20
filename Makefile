@@ -101,4 +101,13 @@ ros2_run:
 	docker exec -it $(CONTAINER_NAME) bash -lc \
 		"ros2 run $(PKG) $(EXEC) $(ARGS)"
 
-.PHONY: build run stop kill attach build_ros clean_build_ros ros2_run
+# ── Generate the acados NMPC solver ───────────────────────────────────────────
+# Usually unnecessary: nmpc_acados_px4_cpp auto-generates its solver during
+# build_ros, and the Python nmpc_acados_px4 generates it on startup. Use this to
+# (re)generate for a specific platform, e.g. PLATFORM=hw.
+PLATFORM ?= sim
+generate_nmpc_solver:
+	docker exec -it $(CONTAINER_NAME) bash -lc \
+		"cd /workspace && python3 src/nmpc_acados_px4/ensure_solver.py --platform $(PLATFORM)"
+
+.PHONY: build run stop kill attach build_ros clean_build_ros ros2_run generate_nmpc_solver
